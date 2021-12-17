@@ -115,38 +115,6 @@ resource "aws_codebuild_project" "codebuild" {
   }
   source {
     type = "CODEPIPELINE"
-    buildspec = <<BUILDSPEC
-version: 0.2
-runtime-versions:
-  java: openjdk8
-phases:
-  install:
-    runtime-versions:
-      docker: 18
-  pre_build:
-    commands:
-      - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=$${COMMIT_HASH:=latest}
-  build:
-    commands:
-      - echo Build started on `date`
-      - echo Packaging the application...
-      - mvn package
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-  post_build:
-    commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-artifacts:
-    files: imagedefinitions.json
-BUILDSPEC
   }
 }
 
@@ -157,7 +125,6 @@ BUILDSPEC
 # Code Commit repo
 resource "aws_codecommit_repository" "source_repo" {
   repository_name = var.source_repo_name
-  //default_branch = var.source_repo_branch TODO: This should be 'main', but that'll make the aws provider crash
   description = "Application Git Repository"
   tags = {
     Name = "${var.stack}-Git-Repo"
