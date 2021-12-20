@@ -13,6 +13,7 @@ terraform {
   }
 }
 
+# Inject the common stack's output vars (like ECR repo URL) from its remote state
 data "terraform_remote_state" "common-infra" {
   backend = "s3"
   config = {
@@ -32,10 +33,11 @@ module "compute" {
   depends_on = [
     module.network.alb_security_group_ids
   ]
-  # ECR Repo URL from common stack
+  # Retrieve the common stack's ECR Repo URL from the remote state
   image_repo_url = data.terraform_remote_state.common-infra.outputs.source_repo_image_url
   project = var.project
   stack = var.stack
+  environment = var.environment
   aws_region = var.aws_region
   fargate-task-service-role = var.fargate-task-service-role
   aws_alb_trgp_id = module.network.alb_target_group_id
@@ -48,6 +50,7 @@ module "network" {
   source = "./modules/network"
   project = var.project
   stack = var.stack
+  environment = var.environment
   az_count = var.az_count
   vpc_cidr = var.vpc_cidr
 }

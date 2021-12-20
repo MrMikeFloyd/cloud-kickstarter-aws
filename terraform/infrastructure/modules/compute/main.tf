@@ -3,10 +3,11 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_ecs_cluster" "ecs-cluster" {
-  name = "${var.stack}-Cluster"
+  name = "${var.stack}-cluster-${var.environment}"
   tags = {
-    Name = "${var.stack}-Cluster"
+    Name = "${var.stack}-cluster-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -22,8 +23,9 @@ resource "aws_ecs_task_definition" "task-def" {
   memory                   = var.fargate_memory
   execution_role_arn       = aws_iam_role.tasks-service-role.arn
   tags = {
-    Name = "${var.stack}-ECS-Task-Def"
+    Name = "${var.stack}-ECS-Task-Def-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
   container_definitions = <<DEFINITION
 [
@@ -57,7 +59,7 @@ DEFINITION
 # SECURITY GROUP FOR ECS TASKS
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_security_group" "task-sg" {
-  name        = "${var.stack}-task-sg"
+  name        = "${var.stack}-task-sg-${var.environment}"
   description = "Allow inbound access to ECS tasks from the ALB only"
   vpc_id      = var.vpc_main_id
 
@@ -75,8 +77,9 @@ resource "aws_security_group" "task-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${var.stack}-task-sg"
+    Name = "${var.stack}-task-sg-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -84,14 +87,15 @@ resource "aws_security_group" "task-sg" {
 # ECS SERVICE
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_ecs_service" "service" {
-  name            = "${var.stack}-Service"
+  name            = "${var.stack}-service-${var.environment}"
   cluster         = aws_ecs_cluster.ecs-cluster.id
   task_definition = aws_ecs_task_definition.task-def.arn
   desired_count   = var.task_count
   launch_type     = "FARGATE"
   tags = {
-    Name = "${var.stack}-ECS-Service"
+    Name = "${var.stack}-ecs-service-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 
   network_configuration {
@@ -104,10 +108,6 @@ resource "aws_ecs_service" "service" {
     container_name   = var.family
     container_port   = var.container_port
   }
-
-  //depends_on = [
-  //  aws_alb_listener.alb-listener
-  //]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -115,9 +115,10 @@ resource "aws_ecs_service" "service" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_cloudwatch_log_group" "cloud-bootstrap-cw-lgrp" {
-  name = var.cw_log_group
+  name = "${var.cw_log_group}-${var.environment}"
   tags = {
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -126,11 +127,12 @@ resource "aws_cloudwatch_log_group" "cloud-bootstrap-cw-lgrp" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_role" "tasks-service-role" {
-  name = "${var.fargate-task-service-role}ECSTasksServiceRole"
+  name = "${var.fargate-task-service-role}ECSTasksServiceRole-${var.environment}"
   path = "/"
   assume_role_policy = data.aws_iam_policy_document.tasks-service-assume-policy.json
   tags = {
     Project = var.project
+    Environment = var.environment
   }
 }
 

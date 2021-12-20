@@ -57,3 +57,4 @@ variable "aws_private_subnet_ids" {}
 variable "aws_alb_trgp_id" {}
 variable "alb_security_group_ids" {}
 variable "vpc_main_id" {}
+variable "environment" {}

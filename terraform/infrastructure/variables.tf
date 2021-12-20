@@ -80,3 +80,8 @@ variable "vpc_cidr" {
 variable "az_count" {
   description = "Number of AZs to cover in a given AWS region"
 }
+
+variable "environment" {
+  description = "Environment scope of this stack (dev, prod, whatever)"
+  type = string
+}

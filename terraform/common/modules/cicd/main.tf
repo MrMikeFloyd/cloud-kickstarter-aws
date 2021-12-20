@@ -365,8 +365,8 @@ resource "aws_codepipeline" "pipeline" {
       input_artifacts = [
         "BuildOutput"]
       configuration = {
-        ClusterName = "${var.stack}-Cluster"
-        ServiceName = "${var.stack}-Service"
+        ClusterName = "${var.stack}-cluster"
+        ServiceName = "${var.stack}-service"
         FileName = "imagedefinitions.json"
         DeploymentTimeout = "15"
       }

@@ -1,6 +1,7 @@
+environment = "prod"
 aws_region = "eu-central-1"
 stack = "cloud-bootstrap"
-fargate-task-service-role = "cloud-bootstrap-role-prod"
+fargate-task-service-role = "cloud-bootstrap-role"
 aws_profile = "default"
 source_repo_name = "cloud-bootstrap"
 source_repo_branch = "main"

@@ -13,8 +13,9 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.stack}-VPC"
+    Name = "${var.stack}-VPC-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -30,6 +31,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "${var.stack}-PrivateSubnet-${count.index + 1}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -46,6 +48,7 @@ resource "aws_subnet" "public" {
   tags = {
     Name = "${var.stack}-PublicSubnet-${count.index + 1}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -56,8 +59,9 @@ resource "aws_subnet" "public" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "${var.stack}-IGW"
+    Name = "${var.stack}-IGW-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -82,6 +86,7 @@ resource "aws_eip" "eip" {
   tags = {
     Name = "${var.stack}-eip-${count.index + 1}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -94,8 +99,9 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = element(aws_subnet.public.*.id, count.index)
   allocation_id = element(aws_eip.eip.*.id, count.index)
   tags = {
-    Name = "${var.stack}-NatGateway-${count.index + 1}"
+    Name = "${var.stack}-NatGateway-${var.environment}-${count.index + 1}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -112,8 +118,9 @@ resource "aws_route_table" "private-route-table" {
     nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
   }
   tags = {
-    Name = "${var.stack}-PrivateRouteTable-${count.index + 1}"
+    Name = "${var.stack}-PrivateRouteTable-${var.environment}-${count.index + 1}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -128,13 +135,14 @@ resource "aws_route_table_association" "route-association" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_alb" "alb" {
-  name = "${var.stack}-alb"
+  name = "${var.stack}-alb-${var.environment}"
   subnets = aws_subnet.public.*.id
   security_groups = [
     aws_security_group.alb-sg.id]
   tags = {
-    Name = "${var.stack}-ALB"
+    Name = "${var.stack}-ALB-${var.environment}"
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -143,7 +151,7 @@ resource "aws_alb" "alb" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_alb_target_group" "trgp" {
-  name = "${var.stack}-tgrp"
+  name = "${var.stack}-tgrp-${var.environment}"
   port = 8080
   protocol = "HTTP"
   vpc_id = aws_vpc.main.id
@@ -159,6 +167,7 @@ resource "aws_alb_target_group" "trgp" {
   }
   tags = {
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -176,6 +185,7 @@ resource "aws_alb_listener" "alb-listener" {
   }
   tags = {
     Project = var.project
+    Environment = var.environment
   }
 }
 
@@ -184,7 +194,7 @@ resource "aws_alb_listener" "alb-listener" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "alb-sg" {
-  name        = "${var.stack}-alb-sg"
+  name        = "${var.stack}-alb-sg-${var.environment}"
   description = "ALB Security Group"
   vpc_id      = aws_vpc.main.id
 
@@ -204,5 +214,6 @@ resource "aws_security_group" "alb-sg" {
   tags = {
     Name = "${var.stack}-alb-sg"
     Project = var.project
+    Environment = var.environment
   }
 }
