@@ -110,7 +110,7 @@ resource "aws_codebuild_project" "codebuild" {
     }
     environment_variable {
       name = "CONTAINER_NAME"
-      value = var.family
+      value = var.container_name
     }
   }
   source {

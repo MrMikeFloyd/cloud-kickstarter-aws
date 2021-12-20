@@ -34,10 +34,6 @@ variable "image_repo_name" {
   type = string
 }
 
-variable "aws_ecr" {
-  description = "AWS ECR "
-}
-
 variable "family" {
   description = "Family of the Task Definition"
   default = "cloud-bootstrap"

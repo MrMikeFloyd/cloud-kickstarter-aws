@@ -1,1 +1,9 @@
-// TODO: Fill me with some values
+aws_region = "eu-central-1"
+stack = "cloud-bootstrap"
+fargate-task-service-role = "cloud-bootstrap-role-prod"
+aws_profile = "default"
+source_repo_name = "cloud-bootstrap"
+source_repo_branch = "main"
+image_repo_name = "cloud-bootstrap"
+vpc_cidr = "172.18.0.0/16"
+az_count = "3"
