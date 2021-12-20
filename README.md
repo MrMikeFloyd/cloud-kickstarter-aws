@@ -17,7 +17,7 @@ This sample was built upon Amazon's excellent [ECS/Fargate/Terraform Lab](https:
 
 ## Quick setup
 
-Assuming you have your AWS CLI & Git all set up and ready to go, it's as simple as:
+Assuming you have your AWS CLI & Git all set up and ready to go, getting the application up and running requires the following steps:
 
 ### Initial Setup for Remote State & Locking
 
@@ -27,12 +27,26 @@ Assuming you have your AWS CLI & Git all set up and ready to go, it's as simple 
 
 You now have all initial resources to maintain the state of your Terraform stack within AWS.
 
-### Infrastructure setup
+### Creating the common infrastructure
 
-1. cd into the `terraform/infrastructure` directory, run `terraform init`
+This sample project uses a central git repo and ci/cd infrastructure. The application stages use the identical container registry to deploy the application from.
+In order to create the git repo and all resources for building and storing container images, you need to:
+
+1. cd into the `terraform/common` directory, run `terraform init`
 2. run `terraform apply`
 
-The infrastructure for maintaining, building, and running your application is now ready.
+### Infrastructure setup
+
+The project is currently prepared for 2 different environments, dev and prod. In order to have a fully functioning environment, you need to apply the infrastructure stack for both environments. If you just want to play around, deploying the `dev` environment is enough. In order to deploy the infrastructure, you need to:
+
+1. cd into the `terraform/infrastructure` directory
+2. initialize the `dev` workspace by running `terraform workspace new dev`
+3. spin up the environment by running `terraform apply -var-file=./dev.terraform.tfvars`
+4. initialize the `prod` workspace by running `terraform workspace new prod`
+5. make sure you're in the `prod` workspace by running `terraform workspace list`
+6. spin up the environment by running `terraform apply -var-file=./prod.terraform.tfvars`
+
+The infrastructure for maintaining, building, and running your application is now ready. Make sure to note down the `alb_address` output somewhere, you'll need it later to test your application.
 
 ### Check in some code and try out the application
 
@@ -41,7 +55,7 @@ The infrastructure for maintaining, building, and running your application is no
 3. copy all contents of the `cloud-bootstap-app` directory into the repo directory
 4. commit and push it
 5. check the CodePipeline run in the AWS console, optionally have a look at the service events in the ECS console
-6. Hit the load balancer's endpoint URL (see `alb_address` stack output) - the service should be online (a good idea would be to hit the service's Swagger UI @ `/swagger-ui.html`).
+6. Hit the load balancer's endpoint URL for either of the environments (see `alb_address` stack output from the previous step) - the service should be online (a good idea would be to hit the service's Swagger UI @ `/swagger-ui.html`).
 7. Change the application's code on your machine, commit and push, and have the changes built & deployed automagically.
 
 That's it.
@@ -115,9 +129,17 @@ The pipeline can now be used to deploy any changes to the application. You can t
 In order to tear down the cluster, execute the following commands:
 
 ```bash
+# compute environments (prod/dev)
 cd terraform/infrastructure
+terraform workspace select prod
+terraform destroy -var-file=./prod.terraform.tfvars
+terraform workspace select dev
+terraform destroy -var-file=./dev.terraform.tfvars
+# ci/cd environment
+cd ../common
 terraform destroy
-cd terraform/initial-setup/remote-state
+# remote state (s3/dynamodb)
+cd terraform/remote-state
 terraform destroy
 ```
 
