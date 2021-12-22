@@ -23,7 +23,7 @@ variable "source_repo_name" {
   type = string
 }
 
-variable "source_repo_branch" {
+variable "source_repo_main_branch_name" {
   description = "Source repo branch"
   type = string
 }

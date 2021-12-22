@@ -86,7 +86,7 @@ resource "aws_codebuild_project" "codebuild" {
     aws_codecommit_repository.source_repo,
     aws_ecr_repository.image_repo
   ]
-  name = "codebuild-${var.source_repo_name}-${var.source_repo_branch}"
+  name = "codebuild-${var.source_repo_name}-${var.source_repo_main_branch_name}"
   service_role = aws_iam_role.codebuild_role.arn
   tags = {
     Project = var.project
@@ -191,7 +191,7 @@ resource "aws_cloudwatch_event_rule" "trigger_rule" {
   "detail": {
     "event": [ "referenceCreated", "referenceUpdated" ],
     "referenceType": [ "branch" ],
-    "referenceName": [ "${var.source_repo_branch}" ]
+    "referenceName": [ "${var.source_repo_main_branch_name}" ]
   }
 }
 PATTERN
@@ -207,7 +207,7 @@ resource "aws_cloudwatch_event_target" "target_pipeline" {
   rule = aws_cloudwatch_event_rule.trigger_rule.name
   arn = aws_codepipeline.pipeline.arn
   role_arn = aws_iam_role.trigger_role.arn
-  target_id = "${var.source_repo_name}-${var.source_repo_branch}-pipeline"
+  target_id = "${var.source_repo_name}-${var.source_repo_main_branch_name}-pipeline"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ resource "aws_codepipeline" "pipeline" {
     aws_codebuild_project.codebuild,
     aws_codecommit_repository.source_repo
   ]
-  name = "${var.source_repo_name}-${var.source_repo_branch}-Pipeline"
+  name = "${var.source_repo_name}-${var.source_repo_main_branch_name}-Pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
   artifact_store {
     location = aws_s3_bucket.artifact_bucket.bucket
@@ -328,7 +328,7 @@ resource "aws_codepipeline" "pipeline" {
       run_order = 1
       configuration = {
         RepositoryName = var.source_repo_name
-        BranchName = var.source_repo_branch
+        BranchName = var.source_repo_main_branch_name
         PollForSourceChanges = "false"
       }
     }
@@ -365,7 +365,7 @@ resource "aws_codepipeline" "pipeline" {
       input_artifacts = [
         "BuildOutput"]
       configuration = {
-        ClusterName = "${var.stack}-cluster"
+        ClusterName = "${var.stack}-cluster" # TODO: Adjust to match the required environment (to dev/prod), if possible
         ServiceName = "${var.stack}-service"
         FileName = "imagedefinitions.json"
         DeploymentTimeout = "15"

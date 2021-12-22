@@ -25,7 +25,7 @@ module "cicd" {
   stack = var.stack
   aws_region = var.aws_region
   image_repo_name = var.image_repo_name
-  source_repo_branch = var.source_repo_branch
+  source_repo_main_branch_name = var.source_repo_main_branch_name
   source_repo_name = var.source_repo_name
   container_name = var.container_name
 }
