@@ -59,10 +59,6 @@ variable "fargate_memory" {
   default = "2048"
 }
 
-variable "fargate-task-service-role-dev" {
-  description = "Name of the stack."
-}
-
 variable "cw_log_group" {
   description = "CloudWatch Log Group"
   default = "CloudBootstrap"
@@ -73,10 +69,26 @@ variable "cw_log_stream" {
   default = "fargate"
 }
 
+variable "fargate-task-service-role-dev" {
+  description = "Name of the stack."
+}
+
 variable "vpc_cidr_dev" {
   description = "CIDR for the VPC"
 }
 
 variable "az_count_dev" {
+  description = "Number of AZs to cover in a given AWS region"
+}
+
+variable "fargate-task-service-role-prod" {
+  description = "Name of the stack."
+}
+
+variable "vpc_cidr_prod" {
+  description = "CIDR for the VPC"
+}
+
+variable "az_count_prod" {
   description = "Number of AZs to cover in a given AWS region"
 }
