@@ -57,10 +57,39 @@ module "compute-dev" {
   cw_log_group = "${var.project}-dev"
 }
 
+# PROD stage
+module "network-prod" {
+  source = "./modules/network-prod"
+  stage = "prod"
+  project = var.project
+  stack = var.stack
+  az_count = var.az_count_prod
+  vpc_cidr = var.vpc_cidr_prod
+}
+module "compute-prod" {
+  source = "./modules/compute-prod"
+  stage = "prod"
+  depends_on = [module.network-prod.alb_security_group_ids]
+  project = var.project
+  stack = var.stack
+  aws_region = var.aws_region
+  image_repo_url = module.cicd.image_repo_url
+  fargate-task-service-role = var.fargate-task-service-role-prod
+  aws_alb_trgp_id = module.network-prod.alb_target_group_id
+  aws_private_subnet_ids = module.network-prod.vpc_private_subnet_ids
+  alb_security_group_ids = module.network-prod.alb_security_group_ids
+  vpc_main_id = module.network-prod.vpc_main_id
+  cw_log_group = "${var.project}-prod"
+}
+
 output "source_repo_clone_url_http" {
   value = module.cicd.source_repo_clone_url_http
 }
 
 output "alb_address_dev" {
   value = module.network-dev.alb_address
+}
+
+output "alb_address_prod" {
+  value = module.network-prod.alb_address
 }
