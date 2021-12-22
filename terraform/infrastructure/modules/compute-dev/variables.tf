@@ -6,6 +6,8 @@ variable "stack" {
   description = "Name of the stack."
 }
 
+variable "stage" {}
+
 variable "aws_region" {
   description = "The AWS region to create things in."
 }
@@ -41,7 +43,6 @@ variable "fargate-task-service-role" {
 
 variable "cw_log_group" {
   description = "CloudWatch Log Group"
-  default     = "CloudBootstrap"
 }
 
 variable "cw_log_stream" {

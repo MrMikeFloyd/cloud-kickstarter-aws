@@ -354,7 +354,7 @@ resource "aws_codepipeline" "pipeline" {
   }
 
   stage {
-    name = "Deploy"
+    name = "Deploy-DEV"
     action {
       name = "Deploy"
       category = "Deploy"
@@ -365,8 +365,8 @@ resource "aws_codepipeline" "pipeline" {
       input_artifacts = [
         "BuildOutput"]
       configuration = {
-        ClusterName = "${var.stack}-Cluster"
-        ServiceName = "${var.stack}-Service"
+        ClusterName = var.ecs_cluster_name_dev
+        ServiceName = var.ecs_service_name_dev
         FileName = "imagedefinitions.json"
         DeploymentTimeout = "15"
       }

@@ -1,7 +1,7 @@
 
 variable "stack" {
   description = "Name of the stack."
-  default     = "CloudBootstrap-InitialSetup"
+  default     = "CloudBootstrap"
 }
 
 variable "project" {
@@ -34,10 +34,6 @@ variable "image_repo_name" {
   type = string
 }
 
-variable "aws_ecr" {
-  description = "AWS ECR "
-}
-
 variable "family" {
   description = "Family of the Task Definition"
   default = "cloud-bootstrap"
@@ -63,7 +59,7 @@ variable "fargate_memory" {
   default = "2048"
 }
 
-variable "fargate-task-service-role" {
+variable "fargate-task-service-role-dev" {
   description = "Name of the stack."
 }
 
@@ -77,10 +73,10 @@ variable "cw_log_stream" {
   default = "fargate"
 }
 
-variable "vpc_cidr" {
+variable "vpc_cidr_dev" {
   description = "CIDR for the VPC"
 }
 
-variable "az_count" {
+variable "az_count_dev" {
   description = "Number of AZs to cover in a given AWS region"
 }

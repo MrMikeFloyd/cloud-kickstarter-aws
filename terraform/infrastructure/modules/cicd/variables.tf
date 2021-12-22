@@ -30,3 +30,6 @@ variable "image_repo_name" {
   description = "Image repo name"
   type = string
 }
+
+variable "ecs_cluster_name_dev"{}
+variable "ecs_service_name_dev"{}
