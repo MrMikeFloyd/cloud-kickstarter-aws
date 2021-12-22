@@ -372,6 +372,21 @@ resource "aws_codepipeline" "pipeline" {
       }
     }
   }
+
+  # Might also want to look at: https://github.com/PatriciaAnong/CodePipeline/blob/master/modules/codepipeline/Approval/Approval.tf
+  stage {
+    name = "Approve"
+    action {
+      name = "Approval"
+      category = "Approval"
+      owner = "AWS"
+      version = "1"
+      provider = "Manual"
+    }
+  }
+
+  # TODO: Add Blue/Green Deployment stage
+  # See https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab2-bluegreen/13-pipeline
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
