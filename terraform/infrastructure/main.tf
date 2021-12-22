@@ -74,12 +74,16 @@ module "compute-prod" {
   stack = var.stack
   aws_region = var.aws_region
   image_repo_url = module.cicd.image_repo_url
-  fargate-task-service-role = var.fargate-task-service-role-prod
-  aws_alb_trgp_id = module.network-prod.alb_target_group_id
-  aws_private_subnet_ids = module.network-prod.vpc_private_subnet_ids
-  alb_security_group_ids = module.network-prod.alb_security_group_ids
   vpc_main_id = module.network-prod.vpc_main_id
   cw_log_group = "${var.project}-prod"
+  fargate-task-service-role = var.fargate-task-service-role-prod
+  aws_alb_listener_arn = module.network-prod.alb_listener_arn
+  aws_alb_security_group_ids = module.network-prod.alb_security_group_ids
+  aws_alb_trgp_blue_id = module.network-prod.alb_target_group_blue_id
+  aws_alb_trgp_blue_name = module.network-prod.alb_target_group_blue_name
+  aws_alb_trgp_green_id = module.network-prod.alb_target_group_green_id
+  aws_alb_trgp_green_name = module.network-prod.alb_target_group_green_name
+  aws_private_subnet_ids = module.network-prod.vpc_private_subnet_ids
 }
 
 output "source_repo_clone_url_http" {

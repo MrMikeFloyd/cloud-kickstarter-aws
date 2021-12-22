@@ -146,11 +146,32 @@ resource "aws_alb" "alb" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ALB TARGET GROUP
+# ALB TARGET GROUPS (WE NEED 2 FOR BLUE/GREEN DEPLOYMENT)
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "aws_alb_target_group" "trgp" {
-  name = "${var.stack}-tgrp-${var.stage}"
+resource "aws_alb_target_group" "trgp-blue" {
+  name = "${var.stack}-tgrp-blue-${var.stage}"
+  port = 8080
+  protocol = "HTTP"
+  vpc_id = aws_vpc.main.id
+  target_type = "ip"
+  health_check {
+    path = "/actuator/health"
+    port = 8080
+    healthy_threshold = 3
+    unhealthy_threshold = 2
+    timeout = 3
+    interval = 8
+    matcher = "200"
+  }
+  tags = {
+    Project = var.project
+    Stage = var.stage
+  }
+}
+
+resource "aws_alb_target_group" "trgp-green" {
+  name = "${var.stack}-tgrp-green-${var.stage}"
   port = 8080
   protocol = "HTTP"
   vpc_id = aws_vpc.main.id
@@ -171,7 +192,7 @@ resource "aws_alb_target_group" "trgp" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ALB LISTENER
+# ALB LISTENER - INITIALLY ROUTE TO THE BLUE GROUP
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_alb_listener" "alb-listener" {
@@ -179,7 +200,7 @@ resource "aws_alb_listener" "alb-listener" {
   port = "80"
   protocol = "HTTP"
   default_action {
-    target_group_arn = aws_alb_target_group.trgp.id
+    target_group_arn = aws_alb_target_group.trgp-blue.id
     type = "forward"
   }
   tags = {

@@ -70,25 +70,25 @@ variable "cw_log_stream" {
 }
 
 variable "fargate-task-service-role-dev" {
-  description = "Name of the stack."
+  description = "Service role name for the dev stage."
 }
 
 variable "vpc_cidr_dev" {
-  description = "CIDR for the VPC"
+  description = "CIDR for the dev VPC"
 }
 
 variable "az_count_dev" {
-  description = "Number of AZs to cover in a given AWS region"
+  description = "Number of AZs to cover in a given AWS region for the dev stage"
 }
 
 variable "fargate-task-service-role-prod" {
-  description = "Name of the stack."
+  description = "Service role name for the prod stage."
 }
 
 variable "vpc_cidr_prod" {
-  description = "CIDR for the VPC"
+  description = "CIDR for the prod VPC"
 }
 
 variable "az_count_prod" {
-  description = "Number of AZs to cover in a given AWS region"
+  description = "Number of AZs to cover in a given AWS region for the prod stage"
 }
