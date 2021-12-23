@@ -356,7 +356,7 @@ resource "aws_codepipeline" "pipeline" {
   stage {
     name = "Deploy-DEV"
     action {
-      name = "Deploy"
+      name = "Deploy-DEV"
       category = "Deploy"
       owner = "AWS"
       version = "1"
@@ -373,6 +373,7 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
+  # Manual approval step
   # Might also want to look at: https://github.com/PatriciaAnong/CodePipeline/blob/master/modules/codepipeline/Approval/Approval.tf
   stage {
     name = "Approve"
@@ -385,8 +386,34 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
-  # TODO: Add Blue/Green Deployment stage
+  # Blue/Green deployment to PROD
+  # For this to work, Task and App specifications need to be packaged with the app container
   # See https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab2-bluegreen/13-pipeline
+  # and https://faun.pub/aws-ecs-blue-green-deployment-setup-using-terraform-b56bb4f656ea
+  stage {
+    name = "Deploy-PROD"
+    action {
+      name      = "Deploy-PROD"
+      category  = "Deploy"
+      owner     = "AWS"
+      provider  = "CodeDeployToECS"
+      version   = "1"
+      run_order = 1
+      input_artifacts = [
+        "BuildArtifact"
+      ]
+      configuration = {
+        ApplicationName = var.codedeploy_application_name
+        DeploymentGroupName = var.codedeploy_deployment_group_name
+        TaskDefinitionTemplateArtifact = "BuildArtifact"
+        TaskDefinitionTemplatePath = "taskdef-prod.json"
+        AppSpecTemplateArtifact = "BuildArtifact"
+        AppSpecTemplatePath = "appspec-prod.yaml"
+        Image1ArtifactName = "BuildArtifact"
+        Image1ContainerName = "IMAGE_NAME"
+      }
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

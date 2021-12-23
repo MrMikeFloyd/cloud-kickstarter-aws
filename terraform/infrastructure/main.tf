@@ -30,6 +30,8 @@ module "cicd" {
   family = var.family
   ecs_cluster_name_dev = module.compute-dev.ecs_cluster_name
   ecs_service_name_dev = module.compute-dev.ecs_service_name
+  codedeploy_application_name = module.compute-prod.codedeploy_app_name
+  codedeploy_deployment_group_name = module.compute-prod.codedeploy_deployment_group_name
 }
 
 # DEV stage

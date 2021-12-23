@@ -1,0 +1,30 @@
+{
+  "family": "cloud-bootstrap-prod",
+  "executionRoleArn": "${TASK_EXEC_ROLE_ARN}",
+  "networkMode": "awsvpc",
+  "cpu": "1024",
+  "memory": "2048",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "containerDefinitions": [
+    {
+      "name": "cloud-bootstrap-prod",
+      "image": "<IMAGE_NAME>",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "CloudBootstrap-prod",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
