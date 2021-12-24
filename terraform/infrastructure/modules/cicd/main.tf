@@ -390,6 +390,9 @@ resource "aws_codepipeline" "pipeline" {
   # For this to work, Task and App specifications need to be packaged with the app container
   # See https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab2-bluegreen/13-pipeline
   # and https://faun.pub/aws-ecs-blue-green-deployment-setup-using-terraform-b56bb4f656ea
+  # fix the following:
+  # Permissions error: Allow Terraform user to perform codedeploys
+  # After that: Apparently the artifact is too big, see https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-ecstocodedeploy-size
   stage {
     name = "Deploy-PROD"
     action {
@@ -400,16 +403,16 @@ resource "aws_codepipeline" "pipeline" {
       version   = "1"
       run_order = 1
       input_artifacts = [
-        "BuildArtifact"
+        "BuildOutput"
       ]
       configuration = {
         ApplicationName = var.codedeploy_application_name
         DeploymentGroupName = var.codedeploy_deployment_group_name
-        TaskDefinitionTemplateArtifact = "BuildArtifact"
+        TaskDefinitionTemplateArtifact = "BuildOutput"
         TaskDefinitionTemplatePath = "taskdef-prod.json"
-        AppSpecTemplateArtifact = "BuildArtifact"
+        AppSpecTemplateArtifact = "BuildOutput"
         AppSpecTemplatePath = "appspec-prod.yaml"
-        Image1ArtifactName = "BuildArtifact"
+        Image1ArtifactName = "BuildOutput"
         Image1ContainerName = "IMAGE_NAME"
       }
     }

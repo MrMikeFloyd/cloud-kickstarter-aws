@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "task-def" {
 [
   {
     "cpu": ${var.fargate_cpu},
-    "image": "<IMAGE_NAME>",
+    "image": "${var.image_repo_url}",
     "memory": ${var.fargate_memory},
     "name": "${var.family}",
     "networkMode": "awsvpc",
