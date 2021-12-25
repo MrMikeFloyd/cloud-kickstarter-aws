@@ -132,6 +132,7 @@ resource "aws_iam_role" "tasks-service-role" {
   assume_role_policy = data.aws_iam_policy_document.tasks-service-assume-policy.json
   tags = {
     Project = var.project
+    Purpose = "tasks-service-role"
     Stage = var.stage
   }
 }

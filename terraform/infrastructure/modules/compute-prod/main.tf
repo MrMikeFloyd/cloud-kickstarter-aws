@@ -134,10 +134,11 @@ resource "aws_iam_role" "deploy-to-ecs-role" {
   assume_role_policy = data.aws_iam_policy_document.codedeploy-assume-policy.json
   tags = {
     Project = var.project
+    Purpose = "deploy-to-ecs-role"
     Stage = var.stage
   }
 }
-
+# TODO: Add AWS Account here
 data "aws_iam_policy_document" "codedeploy-assume-policy" {
   statement {
     actions = [
@@ -228,6 +229,7 @@ resource "aws_iam_role" "tasks-service-role" {
   assume_role_policy = data.aws_iam_policy_document.tasks-service-assume-policy.json
   tags = {
     Project = var.project
+    Purpose = "tasks-service-role"
     Stage = var.stage
   }
 }
