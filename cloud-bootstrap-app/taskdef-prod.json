@@ -9,7 +9,7 @@
   ],
   "containerDefinitions": [
     {
-      "name": "cloud-bootstrap-prod",
+      "name": "cloud-bootstrap",
       "image": "<IMAGE_NAME>",
       "logConfiguration": {
         "logDriver": "awslogs",
