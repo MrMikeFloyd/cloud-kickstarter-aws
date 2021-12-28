@@ -1,6 +1,6 @@
 {
   "family": "cloud-bootstrap-prod",
-  "executionRoleArn": "${TASK_EXEC_ROLE_ARN}",
+  "executionRoleArn": "arn:aws:iam::709769061111:role/cloud-bootstrap-role-prod-ECSTasksServiceRole-prod",
   "networkMode": "awsvpc",
   "cpu": "1024",
   "memory": "2048",
@@ -15,7 +15,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "CloudBootstrap-prod",
-          "awslogs-region": "${AWS_REGION}",
+          "awslogs-region": "eu-central-1",
           "awslogs-stream-prefix": "ecs"
         }
       },
