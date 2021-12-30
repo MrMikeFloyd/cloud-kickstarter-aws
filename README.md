@@ -62,7 +62,7 @@ The infrastructure for maintaining, building, deploying, and running your applic
 
 ```shell
 # make sure to perform this step in your cloned application repo from step 1 & 2
-export TASK_EXEC_ROLE_ARN=<arn-from-tf-output>
+export TASK_EXEC_ROLE_ARN=<your-prod-exec-role-arn-from-terraform-output>
 envsubst < taskdef-prod.json.template > taskdef-prod.json
 ```
 
