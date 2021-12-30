@@ -1,0 +1,16 @@
+# common settings
+aws_region = "eu-central-1"
+stack = "cloud-bootstrap"
+aws_profile = "default"
+image_repo_name = "cloud-bootstrap"
+source_repo_name = "cloud-bootstrap"
+source_repo_branch = "main"
+# stage-specific settings
+# DEV stage
+fargate-task-service-role-dev = "cloud-bootstrap-role-dev"
+vpc_cidr_dev = "172.20.0.0/16"
+az_count_dev = "2"
+# PROD stage
+fargate-task-service-role-prod = "cloud-bootstrap-role-prod"
+vpc_cidr_prod = "172.30.0.0/16"
+az_count_prod = "2"

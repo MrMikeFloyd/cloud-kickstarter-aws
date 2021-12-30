@@ -13,8 +13,9 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "${var.stack}-VPC"
+    Name = "${var.stack}-VPC-${var.stage}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -28,8 +29,9 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   vpc_id            = aws_vpc.main.id
   tags = {
-    Name = "${var.stack}-PrivateSubnet-${count.index + 1}"
+    Name = "${var.stack}-PrivateSubnet-${var.stage}-${count.index + 1}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -44,8 +46,9 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   map_public_ip_on_launch = true
   tags = {
-    Name = "${var.stack}-PublicSubnet-${count.index + 1}"
+    Name = "${var.stack}-PublicSubnet-${var.stage}-${count.index + 1}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -56,8 +59,9 @@ resource "aws_subnet" "public" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "${var.stack}-IGW"
+    Name = "${var.stack}-IGW-${var.stage}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -80,8 +84,9 @@ resource "aws_eip" "eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.igw]
   tags = {
-    Name = "${var.stack}-eip-${count.index + 1}"
+    Name = "${var.stack}-eip-${var.stage}-${count.index + 1}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -94,8 +99,9 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = element(aws_subnet.public.*.id, count.index)
   allocation_id = element(aws_eip.eip.*.id, count.index)
   tags = {
-    Name = "${var.stack}-NatGateway-${count.index + 1}"
+    Name = "${var.stack}-NatGateway-${var.stage}-${count.index + 1}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -112,7 +118,7 @@ resource "aws_route_table" "private-route-table" {
     nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
   }
   tags = {
-    Name = "${var.stack}-PrivateRouteTable-${count.index + 1}"
+    Name = "${var.stack}-PrivateRouteTable-${var.stage}-${count.index + 1}"
     Project = var.project
   }
 }
@@ -128,13 +134,14 @@ resource "aws_route_table_association" "route-association" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_alb" "alb" {
-  name = "${var.stack}-alb"
+  name = "${var.stack}-alb-${var.stage}"
   subnets = aws_subnet.public.*.id
   security_groups = [
     aws_security_group.alb-sg.id]
   tags = {
-    Name = "${var.stack}-ALB"
+    Name = "${var.stack}-ALB-${var.stage}"
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -143,7 +150,7 @@ resource "aws_alb" "alb" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_alb_target_group" "trgp" {
-  name = "${var.stack}-tgrp"
+  name = "${var.stack}-tgrp-${var.stage}"
   port = 8080
   protocol = "HTTP"
   vpc_id = aws_vpc.main.id
@@ -159,6 +166,7 @@ resource "aws_alb_target_group" "trgp" {
   }
   tags = {
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -176,6 +184,7 @@ resource "aws_alb_listener" "alb-listener" {
   }
   tags = {
     Project = var.project
+    Stage = var.stage
   }
 }
 
@@ -184,7 +193,7 @@ resource "aws_alb_listener" "alb-listener" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "alb-sg" {
-  name        = "${var.stack}-alb-sg"
+  name        = "${var.stack}-alb-sg-${var.stage}"
   description = "ALB Security Group"
   vpc_id      = aws_vpc.main.id
 
@@ -202,7 +211,8 @@ resource "aws_security_group" "alb-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${var.stack}-alb-sg"
+    Name = "${var.stack}-alb-sg-${var.stage}"
     Project = var.project
+    Stage = var.stage
   }
 }

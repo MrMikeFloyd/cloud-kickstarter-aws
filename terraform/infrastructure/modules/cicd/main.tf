@@ -23,6 +23,7 @@ EOF
   path = "/"
   tags = {
     Project = var.project
+    Purpose = "codebuild_role"
   }
 }
 
@@ -152,6 +153,7 @@ EOF
   path = "/"
   tags = {
     Project = var.project
+    Purpose = "trigger_role"
   }
 }
 
@@ -234,11 +236,12 @@ EOF
   path = "/"
   tags = {
     Project = var.project
+    Purpose = "codepipeline_role"
   }
 }
 
 resource "aws_iam_policy" "codepipeline_policy" {
-  description = "Policy to allow codepipeline to execute"
+  description = "Policy to allow codepipeline/codedeploy to execute"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -256,6 +259,13 @@ resource "aws_iam_policy" "codepipeline_policy" {
         "codebuild:StartBuild", "codebuild:BatchGetBuilds",
         "cloudformation:*",
         "iam:PassRole"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Action" : [
+        "codedeploy:*"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -354,9 +364,9 @@ resource "aws_codepipeline" "pipeline" {
   }
 
   stage {
-    name = "Deploy"
+    name = "Deploy-DEV"
     action {
-      name = "Deploy"
+      name = "Deploy-DEV"
       category = "Deploy"
       owner = "AWS"
       version = "1"
@@ -365,10 +375,54 @@ resource "aws_codepipeline" "pipeline" {
       input_artifacts = [
         "BuildOutput"]
       configuration = {
-        ClusterName = "${var.stack}-Cluster"
-        ServiceName = "${var.stack}-Service"
+        ClusterName = var.ecs_cluster_name_dev
+        ServiceName = var.ecs_service_name_dev
         FileName = "imagedefinitions.json"
         DeploymentTimeout = "15"
+      }
+    }
+  }
+
+  # Manual approval step
+  # Might also want to look at: https://github.com/PatriciaAnong/CodePipeline/blob/master/modules/codepipeline/Approval/Approval.tf
+  stage {
+    name = "Approve"
+    action {
+      name = "Approval"
+      category = "Approval"
+      owner = "AWS"
+      version = "1"
+      provider = "Manual"
+    }
+  }
+
+  # Blue/Green deployment to PROD
+  # For this to work, Task and App specifications need to be packaged with the app container
+  # See https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab2-bluegreen/13-pipeline
+  # and https://faun.pub/aws-ecs-blue-green-deployment-setup-using-terraform-b56bb4f656ea
+  # Permissions error: Allow Terraform user to perform codedeploys
+  # After that: Apparently the artifact is too big, see https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-ecstocodedeploy-size
+  stage {
+    name = "Deploy-PROD"
+    action {
+      name      = "Deploy-PROD"
+      category  = "Deploy"
+      owner     = "AWS"
+      provider  = "CodeDeployToECS"
+      version   = "1"
+      run_order = 1
+      input_artifacts = [
+        "BuildOutput"
+      ]
+      configuration = {
+        ApplicationName = var.codedeploy_application_name
+        DeploymentGroupName = var.codedeploy_deployment_group_name
+        TaskDefinitionTemplateArtifact = "BuildOutput"
+        TaskDefinitionTemplatePath = "taskdef-prod.json"
+        AppSpecTemplateArtifact = "BuildOutput"
+        AppSpecTemplatePath = "appspec-prod.yaml"
+        Image1ArtifactName = "BuildOutput"
+        Image1ContainerName = "IMAGE_NAME"
       }
     }
   }

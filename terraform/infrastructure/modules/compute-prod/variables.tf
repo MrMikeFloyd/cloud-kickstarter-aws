@@ -6,6 +6,8 @@ variable "stack" {
   description = "Name of the stack."
 }
 
+variable "stage" {}
+
 variable "aws_region" {
   description = "The AWS region to create things in."
 }
@@ -41,7 +43,6 @@ variable "fargate-task-service-role" {
 
 variable "cw_log_group" {
   description = "CloudWatch Log Group"
-  default     = "CloudBootstrap"
 }
 
 variable "cw_log_stream" {
@@ -53,7 +54,11 @@ variable "image_repo_url" {
   description = "ECR Repository URL"
 }
 
-variable "aws_private_subnet_ids" {}
-variable "aws_alb_trgp_id" {}
-variable "alb_security_group_ids" {}
 variable "vpc_main_id" {}
+variable "aws_private_subnet_ids" {}
+variable "aws_alb_trgp_blue_id" {}
+variable "aws_alb_trgp_blue_name" {}
+variable "aws_alb_trgp_green_id" {}
+variable "aws_alb_trgp_green_name" {}
+variable "aws_alb_security_group_ids" {}
+variable "aws_alb_listener_arn" {}
