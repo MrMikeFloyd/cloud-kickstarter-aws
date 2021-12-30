@@ -1,8 +1,8 @@
-# Bootstrap template for kickstarting cloud native projects
+# Kickstarter template for cloud native projects 🚀
 
 This project explores bootstrapping a greenfield cloud software project in the quickest possible way. The goal was to find a setup that helps to get into the feedback loop with minimum hassle and little to no self-managed infrastructure. Also, I wanted to keep as many resources as possible (i.e. _all resources_) within AWS to minimise the need for external Repos, Terraform Cloud accounts, etc.
 
-## What's in the box?
+## What's in the box? 🧰
 
 This project comes with
 
@@ -27,7 +27,7 @@ This sample was built with the help of Amazon's excellent labs and workshops on 
 - [ECS/Fargate/Terraform Lab](https://devops-ecs-fargate.workshop.aws/en/)
 - [CI/CD workshop for Amazon ECS](https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US)
 
-## Quick setup
+## Quick setup 🔨
 
 In order to run this sample, you'll need:
 
