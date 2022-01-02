@@ -58,17 +58,18 @@ The infrastructure for maintaining, building, deploying, and running your applic
 
 1. Use the previous stack's output (`source_repo_clone_url_http`) and use `git clone <url>` to clone it to a location of your choice
 2. copy all contents of the `cloud-bootstap-app` directory into the empty repo directory, then `cd` into it
-3. Create your own ecs task definition by duplicating the template file (`taskdef-prod.json.template`) and filling in your execution role's arn:
+3. Create your own ecs task definition from the prepared template by filling in your execution role's arn:
 
 ```shell
 # make sure to perform this step in your cloned application repo from step 1 & 2
 export TASK_EXEC_ROLE_ARN=<your-prod-exec-role-arn-from-terraform-output>
 envsubst < taskdef-prod.json.template > taskdef-prod.json
+rm taskdef-prod.json.template
 ```
 
 4. commit and push the changes
 5. check the ci/cd execution in the [CodePipeline console](https://console.aws.amazon.com/codepipeline), optionally have a look at the service events in the [ECS console](https://console.aws.amazon.com/ecs) to observe the deployment process
-6. Hit the load balancer's endpoint URL (see `alb_address_dev` stack output) - the service should be online (a good idea would be to hit the service's Swagger UI @ `/swagger-ui.html`).
+6. Test the DEV stage: Hit the load balancer's endpoint URL (see `alb_address_dev` stack output) - the service should be online (a good idea would be to hit the service's Swagger UI @ `/swagger-ui.html`).
 7. Change the application's code on your machine (maybe add a mountain in `MountainsController.kt`?), commit and push
 8. Check the [CodePipeline console](https://console.aws.amazon.com/codepipeline) again. upon successful deployment to DEV, there is a manual approval step that you'll need to confirm in order to trigger the PROD deployment
 9. Upon approval, the blue/green deployment to PROD is triggered. Observe it in the [CodeDeployment console](https://console.aws.amazon.com/codedeploy) and the [ECS console](https://console.aws.amazon.com/ecs). Deployment should take a few minutes.
@@ -76,7 +77,7 @@ envsubst < taskdef-prod.json.template > taskdef-prod.json
 
 That's it.
 
-Should you run into any errors along the way, please have a look at the initial setup steps below. Also, please don't forget to teardown everything when you've played around enough to avoid unnecessary cost.
+Should you run into any errors along the way, please have a look at the initial setup steps below. Also, please don't forget to tear down everything when you're done to avoid unnecessary cost.
 
 ## Detailed Setup
 
