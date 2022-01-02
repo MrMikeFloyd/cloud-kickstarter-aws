@@ -384,7 +384,7 @@ resource "aws_codepipeline" "pipeline" {
   }
 
   # Manual approval step
-  # Might also want to look at: https://github.com/PatriciaAnong/CodePipeline/blob/master/modules/codepipeline/Approval/Approval.tf
+  # Execution will stop here and await approval for up to 7 days
   stage {
     name = "Approve"
     action {
@@ -397,11 +397,6 @@ resource "aws_codepipeline" "pipeline" {
   }
 
   # Blue/Green deployment to PROD
-  # For this to work, Task and App specifications need to be packaged with the app container
-  # See https://catalog.us-east-1.prod.workshops.aws/v2/workshops/869f7eee-d3a2-490b-bf9a-ac90a8fb2d36/en-US/4-basic/lab2-bluegreen/13-pipeline
-  # and https://faun.pub/aws-ecs-blue-green-deployment-setup-using-terraform-b56bb4f656ea
-  # Permissions error: Allow Terraform user to perform codedeploys
-  # After that: Apparently the artifact is too big, see https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html#troubleshooting-ecstocodedeploy-size
   stage {
     name = "Deploy-PROD"
     action {
