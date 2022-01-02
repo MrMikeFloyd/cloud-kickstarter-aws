@@ -58,7 +58,7 @@ The infrastructure for maintaining, building, deploying, and running your applic
 
 1. Use the previous stack's output (`source_repo_clone_url_http`) and use `git clone <url>` to clone it to a location of your choice
 2. copy all contents of the `cloud-bootstap-app` directory into the empty repo directory, then `cd` into it
-3. In for CodeDeploy to be able to create ECS tasks (during blue/green deployment), create your own ecs task definition from the prepared template by filling in your execution role's arn:
+3. In order to for CodeDeploy to be able to create ECS tasks (during blue/green deployment), create your own ecs task definition from the prepared template by filling in your execution role's arn:
 
 ```shell
 # make sure to perform this step in your cloned application repo from step 1 & 2
