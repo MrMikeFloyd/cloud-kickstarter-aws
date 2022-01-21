@@ -138,7 +138,7 @@ resource "aws_iam_role" "deploy-to-ecs-role" {
     Stage = var.stage
   }
 }
-# TODO: Add AWS Account here
+
 data "aws_iam_policy_document" "codedeploy-assume-policy" {
   statement {
     actions = [
@@ -160,7 +160,7 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
 # doc: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group
 resource "aws_codedeploy_deployment_group" "cloud-bootstrap-codedeploy-group" {
   app_name = aws_codedeploy_app.cloud-bootstrap-codedeploy-app.name
-  deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
+  deployment_config_name = "CodeDeployDefault.ECSCanary10Percent5Minutes"
   deployment_group_name = "${var.project}-${var.stage}-deployment-group"
   service_role_arn = aws_iam_role.deploy-to-ecs-role.arn
 
