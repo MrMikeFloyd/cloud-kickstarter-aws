@@ -157,7 +157,9 @@ resource "aws_iam_role_policy_attachment" "codedeploy-role-attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
 }
 
-# doc: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group
+# For alternative deployment configs, see https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html
+# Terraform doc: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group
+# Note that there are no special canary checks in place, health is determined through ALB target group health checks
 resource "aws_codedeploy_deployment_group" "cloud-bootstrap-codedeploy-group" {
   app_name = aws_codedeploy_app.cloud-bootstrap-codedeploy-app.name
   deployment_config_name = "CodeDeployDefault.ECSCanary10Percent5Minutes"
