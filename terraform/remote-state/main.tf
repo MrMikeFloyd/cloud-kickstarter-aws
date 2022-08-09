@@ -12,14 +12,22 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform-backend-state" {
-  bucket = "terraform-backend-state-${var.project}"
-  acl = "private"
-  versioning {
-    enabled = true
-  }
+  bucket_prefix = "terraform-backend-state-${var.project}"
   tags = {
     Name = "${var.stack}-Terraform-Remote-State-S3"
     Project = var.project
+  }
+}
+
+resource "aws_s3_bucket_acl" "terraform-backend-state-acl" {
+  bucket = aws_s3_bucket.terraform-backend-state.id
+  acl = "private"
+}
+
+resource "aws_s3_bucket_versioning" "terraform-backend-state-versioning" {
+  bucket = aws_s3_bucket.terraform-backend-state.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
