@@ -17,7 +17,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform-backend-state" {
-  bucket_prefix = "tf-backend-state-${var.project}-"
+  bucket = "tf-backend-state-${var.project}"
   tags = {
     Name = "${var.stack}-Terraform-Remote-State-S3"
     Project = var.project
