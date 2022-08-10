@@ -3,7 +3,12 @@
 # Apply first before initializing any project resources
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">1.0.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
 }
 
 provider "aws" {
@@ -12,7 +17,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform-backend-state" {
-  bucket_prefix = "terraform-backend-state-${var.project}"
+  bucket_prefix = "tf-backend-state-${var.project}-"
   tags = {
     Name = "${var.stack}-Terraform-Remote-State-S3"
     Project = var.project
@@ -32,7 +37,7 @@ resource "aws_s3_bucket_versioning" "terraform-backend-state-versioning" {
 }
 
 resource "aws_dynamodb_table" "terraform-backend-lock" {
-  name = "terraform-backend-lock-${var.project}"
+  name = "tf-backend-lock-${var.project}"
   hash_key = "LockID"
   read_capacity = 5
   write_capacity = 5
