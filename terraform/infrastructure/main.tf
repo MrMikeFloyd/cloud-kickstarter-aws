@@ -2,12 +2,17 @@
 # AWS PROVIDER FOR TF CLOUD
 # ---------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">1.0.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
   backend "s3" {
     # Setting variables in the backend section isn't possible as of now, see https://github.com/hashicorp/terraform/issues/13022
-    bucket = "terraform-backend-state-cc-cloud-bootstrap"
+    bucket = "tf-backend-state-cc-cloud-bootstrap"
     encrypt = true
-    dynamodb_table = "terraform-backend-lock-cc-cloud-bootstrap"
+    dynamodb_table = "tf-backend-lock-cc-cloud-bootstrap"
     key = "terraform.tfstate"
     region = "eu-central-1"
   }
